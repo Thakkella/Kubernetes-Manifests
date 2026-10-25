@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: read-secrets-global-binding # Unique name for the cluster-scoped binding
+# Note: There is no 'namespace' field under metadata because ClusterRoleBindings are cluster-wide resources.
+subjects:
+- kind: User
+  name: jane                  # Name is case-sensitive
+  apiGroup: rbac.authorization.k8s.io
+- kind: Group
+  name: manager-group         # Binds permissions to an entire group of users
+  apiGroup: rbac.authorization.k8s.io
+- kind: ServiceAccount
+  name: monitor-sa
+  namespace: monitoring       # You must specify the namespace for ServiceAccounts, even in cluster-wide bindings
+roleRef:
+  kind: ClusterRole           # Must be 'ClusterRole'
+  name: secret-reader         # Must match the name of the ClusterRole you want to bind to
+  apiGroup: rbac.authorization.k8s.io
